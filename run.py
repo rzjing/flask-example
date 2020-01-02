@@ -3,15 +3,9 @@
 # @File     : run.py
 # @Time     : 2020/1/1 22:27
 
-from concurrent.futures import ThreadPoolExecutor
+import os
 
-from app import app, redis, make_response
-
-
-@app.before_first_request
-def subscribe():
-    executor = ThreadPoolExecutor(1)
-    executor.submit(redis.subscribe, 'test:public')
+from app import app, make_response, interfaces
 
 
 @app.route('/')
@@ -20,4 +14,4 @@ def trying():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5010, debug=True)
+    app.run(host='0.0.0.0', port=os.getenv('SERVER_PORT', 5000), debug=True)
