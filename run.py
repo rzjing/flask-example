@@ -3,7 +3,15 @@
 # @File     : run.py
 # @Time     : 2020/1/1 22:27
 
-from app import app, make_response, interfaces
+from concurrent.futures import ThreadPoolExecutor
+
+from app import app, redis, make_response
+
+
+@app.before_first_request
+def subscribe():
+    executor = ThreadPoolExecutor(1)
+    executor.submit(redis.subscribe, 'test:public')
 
 
 @app.route('/')

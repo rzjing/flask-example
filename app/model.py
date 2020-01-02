@@ -110,10 +110,19 @@ class Redis(object):
     def publish(self, channel: str, message: str):
         self.connection.publish(channel, message)
 
-    def subscribe(self, channel):
+    def subscribe(self, channel: str):
         sub = self.connection.pubsub()
         sub.subscribe(channel)
-        return sub
+        try:
+            for response in sub.listen():
+                if response['type'] == 'subscribe':
+                    logging.debug(response)
+                else:
+                    print(response)
+        except KeyboardInterrupt:
+            pass
+        finally:
+            sub.unsubscribe(channel)
 
 
 if __name__ == '__main__':
