@@ -3,14 +3,17 @@
 # @File     : scheduler.py
 # @Time     : 2020/1/2 23:01
 
-from flask_restful import Resource
+from datetime import datetime
+
 from apscheduler.jobstores.base import JobLookupError
+from flask_restful import Resource
 
 from app import v1, scheduler, make_response, parser
 from app.common.utils import say
 
 _parser = parser.copy()
 _parser.add_argument('id', type=str, location='args', help='job.id')
+_parser.add_argument('trigger', type=str, choices=['once', 'interval', 'cron'], location='args')
 
 
 class Scheduler(Resource):
@@ -29,9 +32,14 @@ class Scheduler(Resource):
                 jobs=[{'id': job.id, 'next_run_time': job.next_run_time, 'args': job.args} for job in jobs]
             )
 
-    @staticmethod
-    def post():
-        job = scheduler.add_job(say, 'interval', seconds=3, args=['add_job'])
+    def post(self):
+        trigger = self.args['trigger']
+        if trigger == 'once':
+            job = scheduler.add_job(say, next_run_time=datetime.now(), args=[f'{trigger} -> add_job'])
+        elif trigger == 'interval':
+            job = scheduler.add_job(say, 'interval', seconds=3, args=[f'{trigger} -> add_job'])
+        else:
+            job = scheduler.add_job(say, 'cron', minute='*/2', args=[f'{trigger} -> add_job'])
         return make_response(job={'id': job.id, 'next_run_time': job.next_run_time, 'args': job.args})
 
     def delete(self):
