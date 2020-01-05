@@ -17,7 +17,7 @@ class MySQL(object):
         self.params = kwargs
         self.params.update({'charset': 'utf8mb4', 'cursorclass': pymysql.cursors.DictCursor})
         try:
-            self.connection = pymysql.connect(**self.params)
+            self.connection = pymysql.connect(**self.params, connect_timeout=5)
         except OperationalError as e:
             logging.error(e)
 
