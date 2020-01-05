@@ -4,6 +4,7 @@
 # @File     : model.py
 
 import logging
+from unittest.test.testmock.testpatch import function
 
 import pymysql
 import redis
@@ -110,15 +111,12 @@ class Redis(object):
     def publish(self, channel: str, message: str):
         self.connection.publish(channel, message)
 
-    def subscribe(self, channel: str):
+    def subscribe(self, channel: str, callback: function):
         sub = self.connection.pubsub()
         sub.subscribe(channel)
         try:
             for response in sub.listen():
-                if response['type'] == 'subscribe':
-                    logging.debug(response)
-                else:
-                    print(response)
+                callback(response)
         except KeyboardInterrupt:
             pass
         finally:
