@@ -11,8 +11,6 @@ class Config(object):
     def __init__(self):
         self.env = os.getenv('ENV', 'local')
         self.conf_mysql = {
-            'prod': {},
-            'test': {},
             'dev': {
                 'host': '192.168.10.22', 'port': 3306,
                 'user': 'example', 'password': '123456', 'database': 'flask_example'
