@@ -4,7 +4,6 @@
 # @File     : model.py
 
 import logging
-from unittest.test.testmock.testpatch import function
 
 import pymysql
 import redis
@@ -111,7 +110,11 @@ class Redis(object):
     def publish(self, channel: str, message: str):
         self.connection.publish(channel, message)
 
-    def subscribe(self, channel: str, callback: function):
+    def subscribe(self, channel: str, callback):
+        """
+        :param channel: 订阅频道
+        :param callback: 回调函数
+        """
         sub = self.connection.pubsub()
         sub.subscribe(channel)
         try:
