@@ -3,8 +3,12 @@
 # @File     : subscriber.py
 # @Time     : 2020/1/5 21:07
 
+import logging
+
 from app.config import Config
 from app.model import Redis
+
+logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 
 
 class Subscriber(object):
@@ -19,10 +23,10 @@ class Subscriber(object):
     @staticmethod
     def callback(response: dict):
         if response['type'] == 'subscribe':
-            print(f'\nSubscriber is running...\n')
+            logging.info(f'Subscriber is running...\n')
         elif response['type'] == 'message':
             channel, message = response['channel'].decode('utf8'), response['data'].decode('utf8')
-            print(f'Response -> channel: {channel} message: {message}')
+            logging.info(f'Response -> channel: {channel} message: {message}')
 
 
 if __name__ == '__main__':
