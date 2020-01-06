@@ -14,7 +14,10 @@ def trying():
 
 
 if __name__ == '__main__':
-    # 调试模式下解决代码重载导致自动加载的计划任务在多个线程中同时执行的问题
-    if os.getenv('WERKZEUG_RUN_MAIN') == 'true':
+    if os.getenv('FLASK_DEBUG', 'false') == 'true':
+        # 调试模式下解决代码重载导致自动加载的计划任务在多个线程中同时执行的问题
+        if os.getenv('WERKZEUG_RUN_MAIN') == 'true':
+            scheduler.start()
+    else:
         scheduler.start()
     app.run(host='0.0.0.0', port=os.getenv('SERVER_PORT', 5000))
