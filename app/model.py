@@ -4,6 +4,7 @@
 # @File     : model.py
 
 import logging
+from unittest.test.testmock.testpatch import function
 
 import pymysql
 import redis
@@ -16,7 +17,7 @@ class MySQL(object):
         self.params = kwargs
         self.params.update({'charset': 'utf8mb4', 'cursorclass': pymysql.cursors.DictCursor})
         try:
-            self.connection = pymysql.connect(**self.params)
+            self.connection = pymysql.connect(**self.params, connect_timeout=5)
         except OperationalError as e:
             logging.error(e)
 
@@ -110,15 +111,12 @@ class Redis(object):
     def publish(self, channel: str, message: str):
         self.connection.publish(channel, message)
 
-    def subscribe(self, channel: str):
+    def subscribe(self, channel: str, callback: function):
         sub = self.connection.pubsub()
         sub.subscribe(channel)
         try:
             for response in sub.listen():
-                if response['type'] == 'subscribe':
-                    logging.debug(response)
-                else:
-                    print(response)
+                callback(response)
         except KeyboardInterrupt:
             pass
         finally:
