@@ -48,7 +48,7 @@ class Scheduler(Resource):
             if self.args['id']:
                 scheduler.del_job(self.args['id'])
             else:
-                scheduler.remove_all_jobs()
+                scheduler.del_jobs()
         except JobLookupError as e:
             return make_response(code=400, error=e.args[0])
         return make_response(info='deleted')

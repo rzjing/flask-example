@@ -5,9 +5,11 @@
 
 import os
 
+from app import app
+
 
 def say(word):
-    print(f'PPID: {os.getppid()} PID: {os.getpid()} Say -> hello {word}')
+    app.logger.info(f'PPID: {os.getppid()} PID: {os.getpid()} Say -> hello {word}')
 
 
 if __name__ == '__main__':

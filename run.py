@@ -3,6 +3,7 @@
 # @File     : run.py
 # @Time     : 2020/1/1 22:27
 
+import logging
 import os
 
 from app import app, scheduler, make_response, interfaces
@@ -12,6 +13,12 @@ from app import app, scheduler, make_response, interfaces
 def trying():
     return make_response(info='hello world')
 
+
+if os.getenv('RUN_MODE') == 'gunicorn':
+    gun_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gun_logger.handlers
+    app.logger.setLevel(gun_logger.level)
+    scheduler.start()
 
 if __name__ == '__main__':
     if os.getenv('FLASK_DEBUG', 'false') == 'true':
